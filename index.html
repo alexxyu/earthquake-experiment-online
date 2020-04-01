@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="assets/jspsych.js"></script>
+    <script src="assets/jspsych-instructions.js"></script>
+    <script src="assets/jspsych-image-button-response.js"></script>
+    <script src="assets/jspsych-survey-text.js"></script>
+    <script src="assets/jspsych-video-keyboard-response.js"></script>
+    <link rel="stylesheet" href="assets/jspsych.css">
+    </link>
+</head>
+<body></body>
+<script>
+
+    timeline = []
+
+    var opening_page = {
+        type: 'survey-text',
+        questions: [{prompt: 'Enter your participant ID below.', rows:1, columns:8}]
+    };
+    timeline.push(opening_page);
+
+    var instructions = {
+        type: 'instructions',
+        pages: ['In each trial, you will be tasked with choosing the quadrant(s) in which the building shown is damaged. Click the quadrant(s) with the mouse. The quadrants you choose will be highlighted in red. Then, click the continue button to submit your response.',
+                'After each image, you will use one or two sentences to describe the damage that you just saw. Be as specific and detailed as possible. There may be cases where it is obvious that there is damage but you\'re not sure how to describe it. In those cases, make your best attempt at a description. An imprecise description is better than no description at all.',
+                'The test will begin now.'],
+        show_clickable_nav: true,
+        show_page_number: true
+    };
+    timeline.push(instructions);
+
+    // TODO: loop to add all trials and surveys to routine
+    var trial = {
+        type: 'image-button-response',
+        stimulus: 'media/images/BR18.JPG',
+        choices: ['Continue']
+    };
+    timeline.push(trial)
+
+    var survey_page = {
+        type: 'survey-text',
+        questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns: 80}]
+    };
+    timeline.push(survey_page);
+
+    const resizeMultiplier = 0.6;
+    const videoWidth = Math.floor(resizeMultiplier * 1920);
+    const videoHeight = Math.floor(resizeMultiplier * 1080);
+
+    var video = {
+        type: 'video-keyboard-response',
+        width: videoWidth,
+        height: videoHeight,
+        sources: ['media/tutorial.mp4'],
+        autoplay: true,
+        trial_ends_after_video: true,
+        response_ends_trial: false,
+        controls: true,
+        prompt: "Please watch the video above."
+    };
+    // timeline.push(video);
+
+    instructions = {
+        type: 'instructions',
+        pages: ['The experiment will now continue as before.'],
+        show_clickable_nav: true,
+        show_page_number: true
+    };
+    timeline.push(instructions);
+
+    // TODO: 2nd round
+
+    exit_screen = {
+        type: 'instructions',
+        pages: ['You have finished the experiment. Thank you for your participation.'],
+        show_clickable_nav: true,
+        show_page_number: true
+    };
+    timeline.push(exit_screen);
+
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function () { jsPsych.data.displayData(); }
+    });
+
+</script>
+</html>
