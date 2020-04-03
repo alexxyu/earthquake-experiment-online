@@ -12,7 +12,33 @@
 <body></body>
 <script>
 
-    timeline = []
+    var images = ["HBG215.JPG","HBY103.JPG","HBR45.JPG","HBY13.JPG","HBG189.JPG","HBG88.JPG","HBY116.JPG","HBG214.JPG",
+                  "HBG200.JPG","HBG216.JPG","HBY128.JPG","HBY100.JPG","HBG174.JPG","HBY11.JPG","HBR46.JPG","HBG175.JPG",
+                  "HBG74.JPG","HBG60.JPG","HBY101.JPG","HBY115.JPG","HBY129.JPG","HBY111.JPG","HBY139.JPG","HB125.JPG",
+                  "HBY14.JPG","HBR42.JPG","HBG372.JPG","HBY29.JPG","HBY106.JPG","HB126.JPG","HBY17.JPG","HBG359.JPG",
+                  "HBG66.JPG","HBY107.JPG","HBG510.JPG","HBY148.JPG","HBY160.JPG","HBY174.JPG","HBR26.JPG","HBR32.JPG",
+                  "HBR33.JPG","HBR27.JPG","HBY58.JPG","HBY64.JPG","HBG28.JPG","HBY175.JPG","HBY161.JPG","HBY149.JPG",
+                  "HBG275.JPG","HBG507.JPG","HBY163.JPG","HBY99.JPG","HBG8.JPG","HBR19.JPG","HBR31.JPG","HBR25.JPG",
+                  "HBG499.JPG","HBR24.JPG","HBR30.JPG","HBR18.JPG","HBG328.JPG","HBY98.JPG","HBG17.JPG","HBY162.JPG",
+                  "HBY176.JPG","HBG502.JPG","HBG106.JPG","HBR34.JPG","HBG310.JPG","HBG488.JPG","HBR21.JPG","HBG113.JPG",
+                  "HBY89.JPG","HBY167.JPG","HBY173.JPG","HBY171.JPG","HBY159.JPG","HBG10.JPG","HBY48.JPG","HBY60.JPG",
+                  "HBR23.JPG","HBR37.JPG","HBG448.JPG","HBR36.JPG","HBR22.JPG","HBY49.JPG","HBG39.JPG","HBG104.JPG",
+                  "HBY170.JPG","HBY155.JPG","HBY93.JPG","HBG135.JPG","HBY44.JPG","HBG2.JPG","HBY78.JPG","HBR13.JPG",
+                  "HBR12.JPG","HBR2.JPG","HBG134.JPG","HBY154.JPG","HBY140.JPG","HBY168.JPG","HBY156.JPG","HBY90.JPG",
+                  "HBY84.JPG","HBG23.JPG","HBY47.JPG","HBR38.JPG","HBG446.JPG","HBR10.JPG","HBG485.JPG","HBG491.JPG",
+                  "HBG484.JPG","HBR1.JPG","HBG447.JPG","HBR39.JPG","HBY46.JPG","HBY52.JPG","HBY85.JPG","HBY91.JPG",
+                  "HBY143.JPG","HBG292.JPG","HBY153.JPG","HBY147.JPG","HBG133.JPG","HBY95.JPG","HBY56.JPG","HBR15.JPG",
+                  "HBR5.JPG","HBR29.JPG","BR18.JPG","HBG442.JPG","HBY43.JPG","HBY57.JPG","HBG5.JPG","HBY94.JPG",
+                  "HBG33.JPG", "HBY144.JPG","HBG19.JPG","HBY96.JPG","HBY69.JPG","HBY55.JPG","HBG483.JPG","HBG6.JPG",
+                  "HBY151.JPG","HBY145.JPG", "HBG290.JPG","HBG509.JPG","HBY122.JPG","HBY136.JPG","HBY27.JPG","HBY33.JPG",
+                  "HBG94.JPG","HBG195.JPG","HBY137.JPG", "HBY121.JPG","HBG68.JPG","HBG169.JPG","HBY30.JPG","HBY24.JPG",
+                  "HBG425.JPG","HBG431.JPG","HBG380.JPG","HBY4.JPG", "HBG394.JPG","HBY5.JPG","HBG430.JPG","HBG197.JPG",
+                  "HBG96.JPG","HBY25.JPG","HBY31.JPG","HBG55.JPG","HBG69.JPG", "HBY134.JPG","HBY108.JPG","HBG51.JPG",
+                  "HBG178.JPG","HBG187.JPG","HBY35.JPG","HBG420.JPG","HBY1.JPG","HBY20.JPG", "HBY34.JPG","HBG93.JPG",
+                  "HBG50.JPG","HBG44.JPG","HBY119.JPG","HBY131.JPG","HBY127.JPG","HBY133.JPG","HBG85.JPG","HBY22.JPG",
+                  "HBG437.JPG","HBY3.JPG","HBG393.JPG","HBG378.JPG","HBG436.JPG","HBY23.JPG","HBG84.JPG","HBG53.JPG"];
+
+    var timeline = [];
 
     var opening_page = {
         type: 'survey-text',
@@ -24,25 +50,30 @@
         type: 'instructions',
         pages: ['In each trial, you will be tasked with choosing the quadrant(s) in which the building shown is damaged. Click the quadrant(s) with the mouse. The quadrants you choose will be highlighted in red. Then, click the continue button to submit your response.',
                 'After each image, you will use one or two sentences to describe the damage that you just saw. Be as specific and detailed as possible. There may be cases where it is obvious that there is damage but you\'re not sure how to describe it. In those cases, make your best attempt at a description. An imprecise description is better than no description at all.',
-                'The test will begin now.'],
+                'The experiment will start now. Press continue to begin.'],
         show_clickable_nav: true,
-        show_page_number: true
+        show_page_number: false
     };
     timeline.push(instructions);
 
-    // TODO: loop to add all trials and surveys to routine
-    var trial = {
-        type: 'image-button-response',
-        stimulus: 'media/images/BR18.JPG',
-        choices: ['Continue']
-    };
-    timeline.push(trial)
+    for(let i=0; i<100; i++) {
+        let randomIndex = Math.floor(Math.random()*images.length);
+        img = images[randomIndex];
+        images.splice(randomIndex, 1);
 
-    var survey_page = {
-        type: 'survey-text',
-        questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns: 80}]
-    };
-    timeline.push(survey_page);
+        var trial = {
+            type: 'image-button-response',
+            stimulus: 'media/images/' + img, 
+            choices: ['Continue']
+        };
+        timeline.push(trial);
+
+        var survey_page = {
+            type: 'survey-text',
+            questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns:80}]
+        };
+        timeline.push(survey_page);
+    }
 
     const resizeMultiplier = 0.6;
     const videoWidth = Math.floor(resizeMultiplier * 1920);
@@ -56,20 +87,36 @@
         autoplay: true,
         trial_ends_after_video: true,
         response_ends_trial: false,
-        controls: true,
+        controls: false,
         prompt: "Please watch the video above."
     };
-    // timeline.push(video);
+    timeline.push(video);
 
     instructions = {
         type: 'instructions',
-        pages: ['The experiment will now continue as before.'],
-        show_clickable_nav: true,
-        show_page_number: true
+        pages: ['The experiment will now continue as before. Press continue to resume.'],
+        show_clickable_nav: true
     };
     timeline.push(instructions);
 
-    // TODO: 2nd round
+    while(images.length > 0) {
+        let randomIndex = Math.floor(Math.random()*images.length);
+        img = images[randomIndex];
+        images.splice(randomIndex, 1);
+
+        var trial = {
+            type: 'image-button-response',
+            stimulus: 'media/images/' + img,
+            choices: ['Continue']
+        };
+        timeline.push(trial);
+
+        var survey_page = {
+            type: 'survey-text',
+            questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns:80}]
+        };
+        timeline.push(survey_page);
+    }
 
     exit_screen = {
         type: 'instructions',
@@ -81,7 +128,10 @@
 
     jsPsych.init({
         timeline: timeline,
-        on_finish: function () { jsPsych.data.displayData(); }
+        on_finish: function () { 
+            participant_id = JSON.parse(jsPsych.data.get().first(1).values()[0].responses).Q0;
+            jsPsych.data.get().localSave('csv', `${participant_id}_data.csv`); 
+        }
     });
 
 </script>
