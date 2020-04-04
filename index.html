@@ -12,6 +12,8 @@
 <body></body>
 <script>
 
+    const responseTime = 10000;
+
     var images = ["HBG215.JPG","HBY103.JPG","HBR45.JPG","HBY13.JPG","HBG189.JPG","HBG88.JPG","HBY116.JPG","HBG214.JPG",
                   "HBG200.JPG","HBG216.JPG","HBY128.JPG","HBY100.JPG","HBG174.JPG","HBY11.JPG","HBR46.JPG","HBG175.JPG",
                   "HBG74.JPG","HBG60.JPG","HBY101.JPG","HBY115.JPG","HBY129.JPG","HBY111.JPG","HBY139.JPG","HB125.JPG",
@@ -38,6 +40,9 @@
                   "HBG50.JPG","HBG44.JPG","HBY119.JPG","HBY131.JPG","HBY127.JPG","HBY133.JPG","HBG85.JPG","HBY22.JPG",
                   "HBG437.JPG","HBY3.JPG","HBG393.JPG","HBG378.JPG","HBG436.JPG","HBY23.JPG","HBG84.JPG","HBG53.JPG"];
 
+    var imagesInTutorial = ["BR18.JPG","HBR2.JPG","HBG6.JPG","HBG17.JPG","HBG55.JPG","HBR1.JPG","HBG68.JPG",
+                            "HBR5.JPG","HBR27.JPG","HBY22.JPG","HBY111.JPG","HB126.JPG"];
+
     var timeline = [];
 
     var opening_page = {
@@ -56,19 +61,21 @@
     };
     timeline.push(instructions);
 
+    images = images.filter( ( el ) => !imagesInTutorial.includes( el ) );
     for(let i=0; i<100; i++) {
         let randomIndex = Math.floor(Math.random()*images.length);
         img = images[randomIndex];
         images.splice(randomIndex, 1);
 
-        var trial = {
+        let trial = {
             type: 'image-button-response',
             stimulus: 'media/images/' + img, 
-            choices: ['Continue']
+            choices: ['Continue'],
+            trial_duration: responseTime
         };
         timeline.push(trial);
 
-        var survey_page = {
+        let survey_page = {
             type: 'survey-text',
             questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns:80}]
         };
@@ -99,19 +106,21 @@
     };
     timeline.push(instructions);
 
+    images = images.concat(imagesInTutorial);
     while(images.length > 0) {
         let randomIndex = Math.floor(Math.random()*images.length);
         img = images[randomIndex];
         images.splice(randomIndex, 1);
 
-        var trial = {
+        let trial = {
             type: 'image-button-response',
             stimulus: 'media/images/' + img,
-            choices: ['Continue']
+            choices: ['Continue'],
+            trial_duration: responseTime
         };
         timeline.push(trial);
 
-        var survey_page = {
+        let survey_page = {
             type: 'survey-text',
             questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns:80}]
         };
