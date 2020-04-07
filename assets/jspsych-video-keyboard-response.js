@@ -108,9 +108,13 @@ jsPsych.plugins["video-keyboard-response"] = (function() {
 
     if(trial.width) {
       video_html += ' width="'+trial.width+'"';
+    } else {
+      video_html += ' width="90%"';
     }
     if(trial.height) {
       video_html += ' height="'+trial.height+'"';
+    } else {
+      video_html += ' height="90%"';
     }
     if(trial.autoplay){
       video_html += " autoplay ";
