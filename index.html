@@ -2,9 +2,9 @@
 <html>
 <head>
     <script src="assets/jspsych.js"></script>
+    <script src="assets/jspsych-survey-text.js"></script>
     <script src="assets/jspsych-instructions.js"></script>
     <script src="assets/jspsych-image-button-response.js"></script>
-    <script src="assets/jspsych-survey-text.js"></script>
     <script src="assets/jspsych-video-keyboard-response.js"></script>
     <link rel="stylesheet" href="assets/jspsych.css">
     </link>
@@ -12,9 +12,11 @@
 <body></body>
 <script>
 
-    const preVideoTimeLimit = 26;        // in minutes
+    const preVideoTimeLimit = 24;        // in minutes
     const expTimeLimit = 60;             // in minutes
+    const imageDisplayTime = 20;         // in seconds
     const numPreVideoTrials = 100;
+    const videos = ["media/control.mp4", "media/tutorial.mp4"];
 
     var images = ["HBG215.JPG","HBY103.JPG","HBR45.JPG","HBY13.JPG","HBG189.JPG","HBG88.JPG","HBY116.JPG","HBG214.JPG",
                   "HBG200.JPG","HBG216.JPG","HBY128.JPG","HBY100.JPG","HBG174.JPG","HBY11.JPG","HBR46.JPG","HBG175.JPG",
@@ -48,17 +50,16 @@
     var timeline = [];
 
     // Ask for participant ID
-    var opening_page = {
+    timeline.push({
         type: 'survey-text',
         questions: [{prompt: 'Enter your participant ID below.', rows:1, columns:8}]
-    };
-    timeline.push(opening_page);
+    });
 
-    // Display instruction ID
-    var instructions = {
+    // Display instructions
+    timeline.push({
         type: 'instructions',
-        pages: ['In each trial, you will be tasked with choosing the quadrant(s) in which the building shown is damaged. Click the quadrant(s) with the mouse. The quadrants you choose will be highlighted in red. Then, click the continue button to submit your response.',
-                'After each image, you will use one or two sentences to describe the damage that you just saw. Be as specific and detailed as possible. There may be cases where it is obvious that there is damage but you\'re not sure how to describe it. In those cases, make your best attempt at a description. An imprecise description is better than no description at all.',
+        pages: ['In each trial, you will be tasked with choosing the quadrant(s) in which the building shown is damaged. Click the quadrant(s) with the mouse. The quadrants you choose will be highlighted in red. The image will disappear after 20 seconds.',
+                'For each image, you will use one or two sentences to describe the damage that you just saw. Be as specific and detailed as possible. There may be cases where it is obvious that there is damage but you\'re not sure how to describe it. In those cases, make your best attempt at a description. An imprecise description is better than no description at all.',
                 'The experiment will start now. Press next to begin.'],
         show_clickable_nav: true,
         show_page_number: false,
@@ -66,17 +67,17 @@
             // Used to place time limit on experiment parts
             data.startTime = new Date();
         }
-    };
-    timeline.push(instructions);
+    });
 
     // Prepare video
+    var videoToShow = videos[Math.floor(Math.random()*videos.length)];
     var video = {
         type: 'video-keyboard-response',
-        sources: ['media/tutorial.mp4'],
+        sources: [videoToShow],
         autoplay: true,
         trial_ends_after_video: true,
         response_ends_trial: false,
-        controls: true,
+        controls: false,
         prompt: "Please watch the video above."
     };
 
@@ -92,16 +93,14 @@
         let image_page = {
             type: 'image-button-response',
             stimulus: 'media/images/' + img, 
-            choices: ['Continue']
-        };
-        let survey_page = {
-            type: 'survey-text',
-            questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns:80}]
+            choices: ['Continue'], 
+            prompt: 'Click on the quadrants that show damage in the image. Then, in the text box below, describe the damage in the image with as much detail as possible.',
+            image_display_time: imageDisplayTime
         };
 
         // "if" node to determine whether next trial should be shown or not based on time
         let trial = {
-            timeline: [image_page, survey_page],
+            timeline: [image_page],
             conditional_function: function() {
                 return (new Date() - jsPsych.data.get().select('startTime').values[0])/60000 <= preVideoTimeLimit;
             }
@@ -126,19 +125,22 @@
     timeline.push(trials);
     timeline.push(video);
 
-    instructions = {
+    timeline.push({
         type: 'instructions',
         pages: ['The experiment will now continue as before. Press next to resume.'],
         show_clickable_nav: true
-    };
-    timeline.push(instructions);
+    });
 
     // Prepare exit screen for end of experiment
     var exit_screen = {
         type: 'instructions',
         pages: ['You have finished the experiment. Thank you for your participation.'],
-        show_clickable_nav: true,
-        show_page_number: true
+        show_clickable_nav: false,
+        show_page_number: true, 
+        on_load: function () { 
+            participant_id = JSON.parse(jsPsych.data.get().first(1).values()[0].responses).Q0;
+            jsPsych.data.get().localSave('csv', `${participant_id}_data.csv`);
+        }
     };
 
     // Set up all remaining trials
@@ -151,17 +153,15 @@
 
         let image_page = {
             type: 'image-button-response',
-            stimulus: 'media/images/' + img,
-            choices: ['Continue']
-        };
-        let survey_page = {
-            type: 'survey-text',
-            questions: [{prompt: 'Describe the damage in the previous image with as much detail as possible.', rows:5, columns:80}]
+            stimulus: 'media/images/' + img, 
+            choices: ['Continue'], 
+            prompt: 'Click on the quadrants that show damage in the image. Then, in the text box below, describe the damage in the image with as much detail as possible.',
+            image_display_time: imageDisplayTime
         };
 
         // "if" node to determine whether next trial should be shown or not based on time
         let trial = {
-            timeline: [image_page, survey_page],
+            timeline: [image_page],
             conditional_function: function() {
                 return (new Date() - jsPsych.data.get().select('startTime').values[0])/60000 <= expTimeLimit;
             }
@@ -187,11 +187,7 @@
     timeline.push(exit_screen);
 
     jsPsych.init({
-        timeline: timeline,
-        on_finish: function () { 
-            participant_id = JSON.parse(jsPsych.data.get().first(1).values()[0].responses).Q0;
-            jsPsych.data.get().localSave('csv', `${participant_id}_data.csv`); 
-        }
+        timeline: timeline
     });
 
 </script>

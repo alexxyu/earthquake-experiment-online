@@ -60,7 +60,7 @@ jsPsych.plugins["image-button-response"] = (function () {
                 type: jsPsych.plugins.parameterType.STRING,
                 pretty_name: 'Prompt',
                 default: null,
-                description: 'Any content here will be displayed under the button.'
+                description: 'Any content here will be displayed at the top.'
             },
             stimulus_duration: {
                 type: jsPsych.plugins.parameterType.INT,
@@ -92,6 +92,12 @@ jsPsych.plugins["image-button-response"] = (function () {
                 default: true,
                 description: 'If true, then trial will end when user responds.'
             },
+            image_display_time: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Image display time',
+                default: 20,
+                description: 'The amount of time that the image is shown before it disappeares.'
+            }
         }
     }
 
@@ -102,22 +108,25 @@ jsPsych.plugins["image-button-response"] = (function () {
         const width = 600;
         const height = 600;
 
-        //image stimulus
-        var html = '<div style="clear: both">';
+        var prompt = trial.prompt == null ? '' : trial.prompt;
+
+        // Image stimulus
+        var html = '<p>' + prompt + '</p>'
+        html += `<div class="${img_src}" style="clear: both; display: flex; justify-content: center">`;
         html += `<div class="quadrant" data-choice="2" style="background-image: url(${img_src}); outline: blue solid 1px; outline-offset: -1px; `;
         html += `width: ${width/2}px; height: ${height/2}px; float: left; background-size: ${width}px ${height}px; background-position: 0px 0px; display: inline-block;"></div>`;
         html += `<div class="quadrant" data-choice="1" style="background-image: url(${img_src}); outline: blue solid 1px; outline-offset: -1px; `;
         html += `width: ${width/2}px; height: ${height/2}px; float: left; background-size: ${width}px ${height}px; background-position: ${-width/2}px 0px; display: inline-block;"></div>`;
         html += '</div>';
 
-        html += '<div style="clear: both">';
+        html += `<div class="${img_src}" style="clear: both; display: flex; justify-content: center">`;
         html += `<div class="quadrant" data-choice="3" style="background-image: url(${img_src}); outline: blue solid 1px; outline-offset: -1px; `;
         html += `width: ${width/2}px; height: ${height/2}px; float: left; background-size: ${width}px ${height}px;background-position: 0px ${-height/2}px; display: inline-block;"></div>`;
         html += `<div class="quadrant" data-choice="4" style="background-image: url(${img_src}); outline: blue solid 1px; outline-offset: -1px; `;
         html += `width: ${width/2}px; height: ${height/2}px; float: left; background-size: ${width}px ${height}px;background-position: ${-width/2}px ${-height/2}px; display: inline-block;"></div>`;
         html += '</div>';
 
-        //display buttons
+        // Display buttons
         var buttons = [];
         if (Array.isArray(trial.button_html)) {
             if (trial.button_html.length == trial.choices.length) {
@@ -130,31 +139,31 @@ jsPsych.plugins["image-button-response"] = (function () {
                 buttons.push(trial.button_html);
             }
         }
-        html += '<div id="jspsych-image-button-response-btngroup">';
 
+        // Add text box for descriptions
+        html += '<div id="jspsych-survey-text" class="jspsych-survey-text-question">';
+        html += '<textarea id="description" cols="80" rows="6" required placeholder="" style="resize: none; margin: 2em; font-size: 12pt"></textarea>';
+        html += '</div>';
+
+        html += '<div id="jspsych-image-button-response-btngroup">';
         for (var i = 0; i < trial.choices.length; i++) {
             var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
             html += '<div class="jspsych-image-button-response-button" style="display: inline-block; margin:' + trial.margin_vertical + ' ' + trial.margin_horizontal + '" id="jspsych-image-button-response-button-' + i + '" data-choice="' + i + '">' + str + '</div>';
         }
         html += '</div>';
 
-        //show prompt if there is one
-        if (trial.prompt !== null) {
-            html += trial.prompt;
-        }
-
         display_element.innerHTML = html;
 
-        // store response
+        // Store response as response time and quadrants selected
         var response = {
             rt: null,
             quadrants: []
         };
 
-        // start timing
+        // Start timing
         var start_time = performance.now();
 
-        // add click controls to each quadrant in image stimulus
+        // Add click controls to each quadrant in image stimulus
         for(let quadrant of document.getElementsByClassName("quadrant")) {
             quadrant.addEventListener('click', function (event) {
                 if(quadrant.style.outline === "blue solid 1px") {
@@ -184,9 +193,15 @@ jsPsych.plugins["image-button-response"] = (function () {
             });
         }
 
-        // function to handle responses by the subject
+        setTimeout(function() {
+            let toRemove = document.getElementsByClassName(img_src);
+            while(toRemove.length > 0)
+                toRemove[0].remove();
+        }, trial.image_display_time * 1000);
+
+        // Function to handle responses by the subject
         function after_response(choice) {
-            // measure rt
+            // Measure rt
             var end_time = performance.now();
             var rt = end_time - start_time;
             response.rt = rt;
@@ -196,35 +211,36 @@ jsPsych.plugins["image-button-response"] = (function () {
             }
         };
 
-        // function to end trial when it is time
+        // Function to end trial when it is time
         function end_trial() {
 
-            // kill any remaining setTimeout handlers
+            // Kill any remaining setTimeout handlers
             jsPsych.pluginAPI.clearAllTimeouts();
 
+            // Gather the data to store for the trial
             response.quadrants.sort();
-            // gather the data to store for the trial
             var trial_data = {
                 "rt": response.rt,
                 "stimulus": trial.stimulus,
-                "quadrants_selected": response.quadrants
+                "quadrants": response.quadrants,
+                "description": document.getElementById("description").value
             };
 
-            // clear the display
+            // Clear the display
             display_element.innerHTML = '';
 
-            // move on to the next trial
+            // Move on to the next trial
             jsPsych.finishTrial(trial_data);
         };
 
-        // hide image if timing is set
+        // Hide image if timing is set
         if (trial.stimulus_duration !== null) {
             jsPsych.pluginAPI.setTimeout(function () {
                 display_element.querySelector('#jspsych-image-button-response-stimulus').style.visibility = 'hidden';
             }, trial.stimulus_duration);
         }
 
-        // end trial if time limit is set
+        // End trial if time limit is set
         if (trial.trial_duration !== null) {
             jsPsych.pluginAPI.setTimeout(function () {
                 end_trial();
