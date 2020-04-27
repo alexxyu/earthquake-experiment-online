@@ -139,7 +139,18 @@
         show_page_number: true, 
         on_load: function () { 
             participant_id = JSON.parse(jsPsych.data.get().first(1).values()[0].responses).Q0;
+            
+            // Local data save
             jsPsych.data.get().localSave('csv', `${participant_id}_data.csv`);
+
+            /*
+            // Server data save
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            var theUrl = "json-handler.php?filename="+`${participant_id}_data.csv`;
+            xmlhttp.open("POST", theUrl);
+            xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xmlhttp.send(jsPsych.data.get().json());
+            */
         }
     };
 
