@@ -52,7 +52,7 @@
     // Ask for participant ID
     timeline.push({
         type: 'survey-text',
-        questions: [{prompt: 'Enter your participant ID below.', rows:1, columns:8}]
+        questions: [{prompt: "Please enter your unique ID provided from your SONA account. If you do not use your SONA account's unique ID, please email the researcher afterwards the ID you used to get credit.", rows:1, columns:8}]
     });
 
     // Display instructions
@@ -134,7 +134,7 @@
     // Prepare exit screen for end of experiment
     var exit_screen = {
         type: 'instructions',
-        pages: ['You have finished the experiment. Thank you for your participation.'],
+        pages: ['You have finished the experiment. Thank you for your participation. If you did not use your unique ID from SONA, please email the researcher the ID you used to get credit.'],
         show_clickable_nav: false,
         show_page_number: true, 
         on_load: function () { 
